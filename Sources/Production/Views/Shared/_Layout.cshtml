@@ -1,0 +1,32 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <!-- Refresh toutes les 4h (60*60*4)-->
+    <meta http-equiv="refresh" content="14400">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=0.5">
+    <title>@ViewBag.Title</title>
+    <link href="~/Content/Site.css" rel="stylesheet" type="text/css" media="screen,print"/>
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" type="text/css" media="screen,print"/>
+    <link href="~/Content/bootstrap.css" rel="stylesheet" type="text/css" media="screen,print" />
+
+     <link href="~/Content/vis.css" rel="stylesheet" type="text/css" media="screen,print"/>
+    <link href="~/Content/vis-timeline-graph2d.min.css" rel="stylesheet" type="text/css" media="screen,print"/>
+    <script src="~/Scripts/vis.js"></script>
+    <script src="~/Scripts/Site.js"></script>
+</head>
+<body>
+@*<ul class="pager">
+    <li><a href="../Home/">Versions prévisionnelles</a></li>
+    <li><a href="../VersionsCommerciales/">Versions commerciales</a></li>
+    <li><a href="../Sujets/">Backlog produit</a></li>
+</ul>*@ 
+
+@RenderBody()
+<hr/>
+<footer>
+    <p>&copy; @DateTime.Now.Year - TIAMA</p>
+</footer>
+
+</body>
+</html>

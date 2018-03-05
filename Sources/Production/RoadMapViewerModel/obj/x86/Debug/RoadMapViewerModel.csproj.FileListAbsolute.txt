@@ -1,0 +1,5 @@
+D:\Perso\Projets\RoadmapViewer\Sources\Production\RoadMapViewerModel\bin\x86\Debug\RoadMapViewerModel.dll
+D:\Perso\Projets\RoadmapViewer\Sources\Production\RoadMapViewerModel\bin\x86\Debug\RoadMapViewerModel.pdb
+D:\Perso\Projets\RoadmapViewer\Sources\Production\RoadMapViewerModel\obj\x86\Debug\RoadMapViewerModel.dll
+D:\Perso\Projets\RoadmapViewer\Sources\Production\RoadMapViewerModel\obj\x86\Debug\RoadMapViewerModel.pdb
+D:\Perso\Projets\RoadmapViewer\Sources\Production\RoadMapViewerModel\obj\x86\Debug\RoadMapViewerModel.csprojResolveAssemblyReference.cache

@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<produits>
+  <produit codeLiasse="492" produit="Hot Eye"/>
+  <produit codeLiasse="482" produit="MX"/>
+  <produit codeLiasse="504" produit="Falcon"/>
+  <produit codeLiasse="479" produit="UTM"/>
+  <produit codeLiasse="475" produit="MULTI"/>
+  <produit codeLiasse="469" produit="MCAL"/>
+  <produit codeLiasse="921" produit="Renov"/>
+</produits>

@@ -1,0 +1,215 @@
+﻿@using RoadmapViewerModel
+@{
+    ViewBag.Title = "Versions commerciales";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var roadmap = (Roadmap)ViewData["Roadmap"];
+
+}
+
+<div class="well well-sm" style="text-align: center;"><b>Versions commerciales au @DateTime.Now.ToString("d")</b></div>
+<div id="visuVersionsCommerciales"></div><br />
+<table>
+    <tr>
+        <td width="2%"></td>
+        <td width="47%">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-success">
+                        <div class="panel-heading">
+                            <h3 class="panel-title" id="TitleSorties">Dernières sorties</h3>
+                        </div>
+                        <div class="panel-body">
+                            <div id="dernieresSorties"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </td>
+        <td width="2%"></td>
+        <td width="47%">
+            <div id="detailsDernieresSorties"></div>
+        </td>
+        <td width="2%"></td>
+    </tr>
+</table>
+@*<div class="well well-sm" style="text-align: center;"><b>Sujets par version</b></div>
+<div id="sujetsParVersion"></div>
+<br />*@
+
+<script type="text/javascript">
+    // Récupération de l'élément DOM qui contiendra l'affichage de la ligne de temps
+    var containerVersionsCommericales = document.getElementById('visuVersionsCommerciales');
+
+    // Création du dictionnaire des versionsPrevisionnelles par produit (id)
+    var contenuVersion = new Object();
+
+    // Création du DataSet qui contiendra les versionsPrevisionnelles des produits
+    var options = {};
+
+    var versionsCommerciales = new vis.DataSet(options);
+    var renduSujetsParVersion = '';
+    var nbVersion = 0;
+    @{
+        /********************************************/
+        // Gestion du remplissage des différents dictionnaires de données
+        var nbProduit = roadmap.Produits.Count;
+        var listeDesVersions = new List<VersionDuProduit>();
+        var listeDesVersionsSorties = new List<VersionDuProduit>();
+        var sujetsParVersion = new Dictionary<VersionDuProduit, List<Sujet>>();
+
+        // compteur pour identifier chaque entrée dans le dataset VIS
+        var cptId = 1;
+        var produitsClasses = roadmap.Produits.OrderByDescending(p => p.Nom);
+        // on boucle sur les produits
+        for (int indexProduit = 0; indexProduit < nbProduit; indexProduit++)
+        {
+            var produit = produitsClasses.ElementAt(indexProduit);
+
+            var nbVersion = produit.Versions.Count;
+            var versionsOrdonnees = produit.Versions.OrderByDescending(v => v.DateDeSortieAttendue);
+            var produitADesVersionsCommerciales = false;
+            for (int indexVersion = 0; indexVersion < nbVersion; indexVersion++)
+            {
+                var version = versionsOrdonnees.ElementAt(indexVersion);
+                // L'affichage de la version dans la timeline est fait uniquement sur les versionsPrevisionnelles prévisionnelles,
+                // celles dont le nom commercial n'est pas renseigné et pour lesquelles la date de J8 est dans le futur
+                if (version.NomCommercial.Length > 0) //&& version.DateDeSortieRelle < DateTime.Now)
+                {
+                    @:renduSujetsParVersion += '<div class="container panel panel-primary" style="text-align: center; id="@produit.Nom">';
+                    @:renduSujetsParVersion += '<div class="panel-heading"><b>@produit.Nom</b></div></div>';
+                    produitADesVersionsCommerciales = true;
+                    break;
+                }
+            }
+
+            if (!produitADesVersionsCommerciales)
+            {
+                continue;
+            }
+
+            // on parcourt les versionsPrevisionnelles du produit
+            for (int indexVersion = 0; indexVersion < nbVersion; indexVersion++)
+            {
+                var version = versionsOrdonnees.ElementAt(indexVersion);
+                // L'affichage de la version dans la timeline est fait uniquement sur les versionsPrevisionnelles prévisionnelles,
+                // celles dont le nom commercial n'est pas renseigné et pour lesquelles la date de J8 est dans le futur
+                if (version.NomCommercial.Length == 0)// || version.DateDeSortieAttendue > DateTime.Now)
+                {
+                    continue;
+                }
+                else
+                {
+                    @:versionsCommerciales.add([{ id: @cptId, content: '@version.NomCommercial', start: '@version.DateDeSortieRelle.ToString("yyyy-MM-dd")' }]);
+                        @:renduSujetsParVersion += '<div class="container panel panel-info"><div class="panel-heading">';
+                        @:renduSujetsParVersion += '<h3 class="panel-title">@version.NomCommercial (@version.NomDeCode) - @version.DateDeSortieRelle.ToString("dd/MM/yyyy")</h3>';
+                        @:renduSujetsParVersion += '</div></div>';
+                                    }
+                listeDesVersions.Add(version);
+                var indexSujetInsere = 0;
+                @:var sujets = new Array();
+
+                var sujets = new List<Sujet>();
+                sujetsParVersion.Add(version, sujets);
+
+                @:renduSujetsParVersion += '<div class="container"><table class="table table-striped"><tbody>';
+
+                // liaison entre la version et ses sujets
+                for (var indexSujet = 0; indexSujet < produit.Backlog.Count; indexSujet++)
+                {
+                    var sujet = produit.Backlog.ElementAt(indexSujet);
+
+                    if (sujet.VersionCible.NomDeCode.Equals(version.NomDeCode))
+                    {
+                        @:renduSujetsParVersion += '<tr><td>@sujet.Libelle - @sujet.ChargeEstimee jour(s)</td></tr>';
+                            // remplissage du dictionnaire idVersion liste des sujets
+                        @:sujets[@indexSujetInsere]= '@sujet.Libelle - @sujet.ChargeEstimee jour(s)';
+                                                            indexSujetInsere++;
+                        sujetsParVersion[version].Add(sujet);
+                    }
+                }
+                     @:renduSujetsParVersion += '</tbody></table></div>';
+                        <text>contenuVersion[@cptId] = sujets;</text>
+                cptId++;
+             }
+             listeDesVersionsSorties.AddRange(produit.VersionsSorties);
+        }
+     }
+    nbVersion = @cptId;
+    /********************************************/
+    // Configuration de la timeline des versions commerciales
+    options = {
+        start: '@DateTime.Now.AddMonths(-12).ToString("yyyy-MM-dd")',
+        end: '@DateTime.Now.AddMonths(+3).ToString("yyyy-MM-dd")',
+        showCurrentTime: true
+    };
+
+    // Création de la timeline
+    var timelineVersionsCommerciales = new vis.Timeline(containerVersionsCommericales, versionsCommerciales, options);
+    timelineVersionsCommerciales.fit();
+
+    /********************************************/
+    // Gestionnaire d'évènement de sélection d'une version dans la timeline
+    timelineVersionsCommerciales.on('select', function (properties) {
+        selectItemCommerciale(properties.items[0]);
+    });
+
+    /********************************************/
+    // gestion des dernières versions sorties
+    var stringVersionsSorties = '<ul>';
+    var contenu = '';
+    @{
+        listeDesVersionsSorties.Sort((x, y) => DateTime.Compare(y.DateDeSortieRelle, x.DateDeSortieRelle));
+        var aujourdhui = DateTime.Now;
+        var cptEcheance = 1;
+        // 5 échéances max affichées
+        var nbEcheanceMaxAffichees = 5;
+        // 184 = 6 mois
+        var limiteEnJourPourAffichage = 184;
+        foreach (var versionSortie in listeDesVersionsSorties)
+        {
+            if (cptEcheance > nbEcheanceMaxAffichees)
+            {
+                break;
+            }
+            if ((versionSortie.DateDeSortieRelle < aujourdhui) )//&& (Math.Ceiling(((aujourdhui - versionSortie.DateDeSortieRelle).TotalMilliseconds) / (1000 * 60 * 60 * 24)) < limiteEnJourPourAffichage))
+            {
+                var ecart = (versionSortie.DateDeSortieRelle - versionSortie.DateDeSortieAttendue).TotalDays;
+                // Adaptation du libellé en fonction du décalage
+                var stringEcart = "dans les temps";
+                if (ecart > 0)
+                { stringEcart = " en retard de " + ecart + " jour(s)";}
+                else if (ecart < 0)
+                {stringEcart = "en avance de " + Math.Abs(ecart) + " jour(s)"; }
+
+                    @:contenu = '';
+                                                        foreach (var sujet in sujetsParVersion[versionSortie])
+                    {
+                        @:contenu += '@sujet.Libelle \n';
+                                                        }
+
+                    @:stringVersionsSorties += '<li><div class="container"><b>@versionSortie.NomCommercial</b> le @versionSortie.DateDeSortieRelle.ToString("dd-MM-yyyy") /  @versionSortie.NomDeCode - @versionSortie.DateDeSortieAttendue.ToString("dd-MM-yyy") / @stringEcart <span data-toggle="tooltip" data-placement="bottom" title="';
+                                                        @:stringVersionsSorties += contenu + '"><span class="badge">@sujetsParVersion[versionSortie].Count</span></span></div></li>';
+                                                        cptEcheance++;
+                }
+            }
+        }
+    stringVersionsSorties += '</ul>';
+    document.getElementById('TitleSorties').innerHTML = @nbEcheanceMaxAffichees + " Dernières version lors des 6 derniers mois";
+    document.getElementById('dernieresSorties').innerHTML = stringVersionsSorties;
+
+    timelineVersionsCommerciales.setSelection(1);
+    selectItemCommerciale(1);
+
+    var indexVersionSelectionnee = 1;
+
+    this.setInterval(function() {
+        indexVersionSelectionnee++;
+        if (indexVersionSelectionnee >= nbVersion) {
+            document.location.href = "../Sujets/";
+        }
+        timelineVersionsCommerciales.setSelection(indexVersionSelectionnee);
+        selectItemCommerciale(indexVersionSelectionnee);
+
+    }, 2000);
+
+</script>

@@ -1,0 +1,71 @@
+﻿@using RoadmapViewerModel
+
+@{
+    ViewBag.Title = "Sujets";
+    Layout = "~/Views/Shared/_Layout.cshtml"; var roadmap = (Roadmap)ViewData["Roadmap"];
+
+}
+
+@{
+    var nbProduit = roadmap.Produits.Count;
+    var listeDesVersions = new List<VersionDuProduit>();
+    var sujetsParVersion = new Dictionary<VersionDuProduit, List<Sujet>>();
+
+    var produits = roadmap.Produits.OrderByDescending(p => p.Nom);
+
+    @*<h5 class="container">
+        @{
+            for (int indexProduit = 0; indexProduit < nbProduit; indexProduit++)
+            {
+                var produit = produits.ElementAt(indexProduit);
+                <a href="#@produit.Nom">@produit.Nom | </a>
+
+            }
+        }
+    </h5>*@
+    <div class="well well-sm" style="text-align: center;"><b>Liste des sujets par produit</b></div>
+            // on boucle sur les produits
+            for (int indexProduit = 0; indexProduit < nbProduit; indexProduit++)
+            {
+                var produit = produits.ElementAt(indexProduit);
+        <div class="container panel panel-primary" style="text-align: center;" id="@produit.Nom"><div class="panel-heading"><b>@produit.Nom</b></div></div>
+        var sujetsOrdonnes = produit.Backlog.OrderBy(s => s.Libelle);
+        var nbSujet = sujetsOrdonnes.Count();
+                // on parcourt les versionsPrevisionnelles du produit
+                
+        <div class="container">
+            <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Sujet</th><th>Version cible</th><th>Version commerciale</th><th>Charge</th>
+            </tr>
+            </thead>
+                <tbody>
+                    @{
+                        for (int indexVersion = 0; indexVersion < nbSujet; indexVersion++)
+                        {
+                            var sujet = sujetsOrdonnes.ElementAt(indexVersion);
+                            var versionRealisation = "non sorti";
+                            if (sujet.VersionDeRealisation != null)
+                            {
+                                versionRealisation = sujet.VersionDeRealisation.NomCommercial + " (" +sujet.VersionCible.NomDeCode+")";
+                            }
+                            <tr><td>@sujet.Libelle</td> <td>@sujet.VersionCible.NomDeCode</td><td>@versionRealisation</td><td>@sujet.ChargeEstimee jour(s)</td></tr>
+                        }
+                    }
+                </tbody>
+                </table>
+            </div>
+        }
+    }
+<script type="text/javascript">
+    var cptScroll = 1;
+    var pasScroll = Math.ceil(window.innerHeight / 4);
+
+    this.setInterval(function () {
+        if (cptScroll > 4) document.location.href = "../Home/";
+        window.scrollBy(0, pasScroll * cptScroll);
+        cptScroll++;
+    }, 2000);
+</script>
+

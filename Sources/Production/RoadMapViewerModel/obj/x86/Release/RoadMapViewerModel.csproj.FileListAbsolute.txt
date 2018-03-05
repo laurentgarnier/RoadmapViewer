@@ -1,0 +1,4 @@
+D:\Perso\Projets\RoadmapViewer\Sources\Production\RoadMapViewerModel\bin\x86\Release\RoadMapViewerModel.dll
+D:\Perso\Projets\RoadmapViewer\Sources\Production\RoadMapViewerModel\bin\x86\Release\RoadMapViewerModel.pdb
+D:\Perso\Projets\RoadmapViewer\Sources\Production\RoadMapViewerModel\obj\x86\Release\RoadMapViewerModel.dll
+D:\Perso\Projets\RoadmapViewer\Sources\Production\RoadMapViewerModel\obj\x86\Release\RoadMapViewerModel.pdb
